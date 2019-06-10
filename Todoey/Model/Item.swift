@@ -9,6 +9,6 @@
 import Foundation
 
 class Item {
-    let title : String = ""
-    let status : Bool = false
+    var title : String = ""
+    var status : Bool = false
 }
