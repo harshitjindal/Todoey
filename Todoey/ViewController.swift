@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UITableViewController {
     
-    let itemArray = ["Find Piggy", "Buy eggos", "Watch birds", "Sleep!", "Destroy Demogorgon"]
+    var itemArray = ["Find Piggy", "Buy eggos", "Watch birds", "Sleep!", "Destroy Demogorgon"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +36,34 @@ class ViewController: UITableViewController {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add Todoey Item", message: "Please enter the item", preferredStyle: .alert)
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "What do you want to do?"
+            textField = alertTextField
+        }
+        
+        let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
+            let newItem = textField.text
+            self.itemArray.append(newItem!)
+            self.tableView.reloadData()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in
+            
+        }
+        
+        alert.addAction(addAction)
+        alert.addAction(cancelAction)
+        
+        
+        
+        present(alert, animated: true)
     }
 }
 
