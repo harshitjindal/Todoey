@@ -60,15 +60,10 @@ class ViewController: UITableViewController {
             self.tableView.reloadData()
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in
-            
-        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in }
         
         alert.addAction(addAction)
         alert.addAction(cancelAction)
-        
-        
-        
         present(alert, animated: true)
     }
 }
