@@ -10,12 +10,15 @@ import UIKit
 
 class ViewController: UITableViewController {
     
-    let defaults = UserDefaults.standard
-    
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     var itemArray = [Item]()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        
+        print(dataFilePath)
         
         let newItem1 = Item()
         newItem1.title = "Find Piggy"
@@ -33,7 +36,7 @@ class ViewController: UITableViewController {
         newItem4.title = "Kill Demogorgons"
         itemArray.append(newItem4)
         
-        
+        loadData()
         
 //        if let items = defaults.array(forKey: "ToDoList") as? [String] {
 //            itemArray = items
@@ -60,6 +63,7 @@ class ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = itemArray[indexPath.row]
         item.status = !(item.status)
+        saveData()
         tableView.deselectRow(at: indexPath, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             tableView.reloadData()
@@ -82,6 +86,7 @@ class ViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
 //            self.defaults.set(self.itemArray, forKey: "ToDoList")
+            saveData()
             self.tableView.reloadData()
         }
         
@@ -90,6 +95,29 @@ class ViewController: UITableViewController {
         alert.addAction(addAction)
         alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+    
+    func saveData() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+            
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func loadData() {
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
 }
 
