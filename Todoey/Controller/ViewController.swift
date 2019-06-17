@@ -86,7 +86,7 @@ class ViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
 //            self.defaults.set(self.itemArray, forKey: "ToDoList")
-            saveData()
+            self.saveData()
             self.tableView.reloadData()
         }
         
