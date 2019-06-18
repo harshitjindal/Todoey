@@ -48,6 +48,14 @@ class ViewController: UITableViewController {
         
     }
     
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            saveData()
+        }
+    }
+    
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
@@ -81,6 +89,7 @@ class ViewController: UITableViewController {
         } catch {
             print("Error saving context: \(error.localizedDescription)")
         }
+        tableView.reloadData()
     }
     
     func loadData() {
