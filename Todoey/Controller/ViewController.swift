@@ -17,7 +17,7 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        loadData()
+        loadData()
     }
 
     //MARK: - TableView Datasource Methods
@@ -62,7 +62,7 @@ class ViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
             self.itemArray.append(newItem)
-//            self.defaults.set(self.itemArray, forKey: "ToDoList")
+            //            self.defaults.set(self.itemArray, forKey: "ToDoList")
             self.saveData()
             self.tableView.reloadData()
         }
@@ -83,15 +83,13 @@ class ViewController: UITableViewController {
         }
     }
     
-//    func loadData() {
-//        if let data = try? Data(contentsOf: dataFilePath!) {
-//            let decoder = PropertyListDecoder()
-//            do {
-//                itemArray = try decoder.decode([Item].self, from: data)
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
+    func loadData() {
+        let request:NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print("Error Fetching from Persistent Container\(error.localizedDescription)")
+        }
+    }
 }
 
