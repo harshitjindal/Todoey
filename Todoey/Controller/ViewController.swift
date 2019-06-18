@@ -92,8 +92,7 @@ class ViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadData() {
-        let request:NSFetchRequest<Item> = Item.fetchRequest()
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
         do {
             itemArray = try context.fetch(request)
         } catch {
