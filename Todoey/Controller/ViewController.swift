@@ -7,40 +7,17 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UITableViewController {
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     var itemArray = [Item]()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
-        print(dataFilePath)
-        
-        let newItem1 = Item()
-        newItem1.title = "Find Piggy"
-        itemArray.append(newItem1)
-        
-        let newItem2 = Item()
-        newItem2.title = "Wash Tuffy"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Save the World"
-        itemArray.append(newItem3)
-        
-        let newItem4 = Item()
-        newItem4.title = "Kill Demogorgons"
-        itemArray.append(newItem4)
-        
-        loadData()
-        
-//        if let items = defaults.array(forKey: "ToDoList") as? [String] {
-//            itemArray = items
-//        }
+//        loadData()
     }
 
     //MARK: - TableView Datasource Methods
@@ -82,7 +59,7 @@ class ViewController: UITableViewController {
         }
         
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
-            let newItem = Item()
+            let newItem = Item(context: self.context)
             newItem.title = textField.text!
             self.itemArray.append(newItem)
 //            self.defaults.set(self.itemArray, forKey: "ToDoList")
@@ -98,26 +75,23 @@ class ViewController: UITableViewController {
     }
     
     func saveData() {
-        let encoder = PropertyListEncoder()
-        
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
-            
+            try context.save()
         } catch {
-            print(error.localizedDescription)
+            print("Error saving context: \(error.localizedDescription)")
         }
     }
     
-    func loadData() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
+//    func loadData() {
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            let decoder = PropertyListDecoder()
+//            do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
 }
 

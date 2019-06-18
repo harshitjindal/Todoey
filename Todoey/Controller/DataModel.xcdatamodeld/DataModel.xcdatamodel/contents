@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14838.16" systemVersion="19A471t" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="NO" userDefinedModelVersionIdentifier="">
-    <elements/>
+    <entity name="Item" representedClassName=".Item" syncable="YES" codeGenerationType="class">
+        <attribute name="status" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="title" attributeType="String" defaultValueString=""/>
+    </entity>
+    <elements>
+        <element name="Item" positionX="-63" positionY="-18" width="128" height="73"/>
+    </elements>
 </model>
