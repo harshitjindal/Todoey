@@ -98,6 +98,18 @@ class ViewController: UITableViewController {
         } catch {
             print("Error Fetching from Persistent Container\(error.localizedDescription)")
         }
+        tableView.reloadData()
+    }
+}
+
+//MARK: - Search Bar Methods
+
+extension ViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request:NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadData(with: request)
     }
 }
 
