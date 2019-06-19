@@ -19,22 +19,22 @@ class ViewController: UITableViewController {
         
         loadData()
     }
-
+    
     //MARK: - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "toDoItemCell", for: indexPath)
+        let itemCell = tableView.dequeueReusableCell(withIdentifier: "toDoItemCell", for: indexPath)
         let item = itemArray[indexPath.row]
         
-        cell.textLabel?.text = itemArray[indexPath.row].title
+        itemCell.textLabel?.text = itemArray[indexPath.row].title
         
-        cell.accessoryType = item.status ? .checkmark : .none
+        itemCell.accessoryType = item.status ? .checkmark : .none
         
-        return cell
+        return itemCell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -59,7 +59,7 @@ class ViewController: UITableViewController {
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add Todoey Item", message: "Please enter the item", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add Todoey Item", message: "Please Enter Item", preferredStyle: .alert)
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "What do you want to do?"
@@ -70,7 +70,6 @@ class ViewController: UITableViewController {
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
             self.itemArray.append(newItem)
-            //            self.defaults.set(self.itemArray, forKey: "ToDoList")
             self.saveData()
             self.tableView.reloadData()
         }
@@ -96,7 +95,7 @@ class ViewController: UITableViewController {
         do {
             itemArray = try context.fetch(request)
         } catch {
-            print("Error Fetching from Persistent Container\(error.localizedDescription)")
+            print("Error Fetching from Persistent Container: \(error.localizedDescription)")
         }
         tableView.reloadData()
     }
@@ -105,15 +104,14 @@ class ViewController: UITableViewController {
 //MARK: - Search Bar Methods
 
 extension ViewController: UISearchBarDelegate {
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadData()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
-        }
-            else {
+        } else {
             let request:NSFetchRequest<Item> = Item.fetchRequest()
             request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
             request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
@@ -121,4 +119,3 @@ extension ViewController: UISearchBarDelegate {
         }
     }
 }
-
