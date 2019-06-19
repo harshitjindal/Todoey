@@ -7,7 +7,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Todoey-->
+        <!--Items-->
         <scene sceneID="of8-mA-EaR">
             <objects>
                 <tableViewController id="l41-Ko-7sk" customClass="ViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
@@ -38,7 +38,7 @@
                             <outlet property="delegate" destination="l41-Ko-7sk" id="GVG-cf-jP7"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Todoey" id="fph-Zf-tc7">
+                    <navigationItem key="navigationItem" title="Items" id="fph-Zf-tc7">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="t4e-LX-LsJ">
                             <color key="tintColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
@@ -76,7 +76,7 @@
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="118.52678571428571"/>
         </scene>
-        <!--Category View Controller-->
+        <!--Todoey-->
         <scene sceneID="WIe-bX-vRs">
             <objects>
                 <tableViewController id="7Yb-Ac-rZw" customClass="CategoryViewController" customModule="Todoey" customModuleProvider="target" sceneMemberID="viewController">
@@ -84,9 +84,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <searchBar key="tableHeaderView" contentMode="redraw" id="BhL-fm-Ms6">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </searchBar>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="GqO-eA-nXa">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CategoryCell" id="GqO-eA-nXa">
+                                <rect key="frame" x="0.0" y="72" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GqO-eA-nXa" id="35H-YH-MOp">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -99,7 +104,14 @@
                             <outlet property="delegate" destination="7Yb-Ac-rZw" id="4dC-Bu-Uhh"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="YE4-St-OTj"/>
+                    <navigationItem key="navigationItem" title="Todoey" id="YE4-St-OTj">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="lmP-3k-3WZ">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="7Yb-Ac-rZw" id="R1R-R4-95v"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="l41-Ko-7sk" kind="show" identifier="goToItems" id="MLO-9K-aRz"/>
                     </connections>
