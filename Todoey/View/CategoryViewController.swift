@@ -17,8 +17,23 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadData()
+        loadCategories()
     }
+    
+    // MARK: - Table View Data Source Methods
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return categoryArray.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let categoryCell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
+        categoryCell.textLabel?.text = categoryArray[indexPath.row].name
+        categoryCell.accessoryType = .disclosureIndicator
+        return categoryCell
+    }
+    
+    // MARK: - Add New Categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -33,7 +48,7 @@ class CategoryViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text
-            self.saveData()
+            self.saveCategories()
             self.tableView.reloadData()
         }
         
@@ -44,30 +59,10 @@ class CategoryViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-    // MARK: - Table view data source methods
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
-    }
+    // MARK: - Data Manipulation Methods
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let categoryCell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        categoryCell.textLabel?.text = categoryArray[indexPath.row].name
-        categoryCell.accessoryType = .disclosureIndicator
-        return categoryCell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-    // MARK: - Table view data update methods
-    
-    
-    
-    // MARK: - Table view delegate methods
-    
-    func saveData() {
+    func saveCategories() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         do {
             try context.save()
@@ -77,7 +72,7 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadData(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
         do {
             categoryArray = try context.fetch(request)
         } catch {
@@ -85,13 +80,40 @@ class CategoryViewController: UITableViewController {
         }
         tableView.reloadData()
     }
+    
+    // MARK: - Table view delegate methods
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! ItemsViewController
+        if let indexPath = tableView.indexPathForSelectedRow {
+            destinationVC.selectedCategory = categoryArray[indexPath.row]
+        }
+    }
+    
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//            for items in Category[indexPath.row] {
+//                context.delete(Item[indexPath.row])
+//            }
+//            context.delete(categoryArray[indexPath.row])
+//            categoryArray.remove(at: indexPath.row)
+//            saveCategories()
+//        }
+//    }
 }
+
+// MARK: - Search Bar Extension
 
 extension CategoryViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
-            loadData()
+            loadCategories()
             DispatchQueue.main.async {
                 searchBar.resignFirstResponder()
             }
@@ -99,7 +121,7 @@ extension CategoryViewController: UISearchBarDelegate {
             let request:NSFetchRequest<Category> = Category.fetchRequest()
             request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
             request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-            loadData(with: request)
+            loadCategories(with: request)
         }
     }
 }
