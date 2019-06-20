@@ -73,7 +73,7 @@ class ItemsViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
             let newItem = Item(context: self.context)
             newItem.title = textField.text!
-            newItem.parentcategory = self.selectedCategory
+            newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
 
             self.saveData()
@@ -96,7 +96,7 @@ class ItemsViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil) {
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), _ predicate: NSPredicate? = nil) {
         let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
         if let additionalPredicate = predicate {
             request.predicate =  NSCompoundPredicate(andPredicateWithSubpredicates: [additionalPredicate, categoryPredicate])
@@ -127,7 +127,7 @@ extension ItemsViewController: UISearchBarDelegate {
             let request:NSFetchRequest<Item> = Item.fetchRequest()
             let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
             request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-            loadData(with: request, predicate: predicate)
+            loadData(with: request, predicate)
         }
     }
 }

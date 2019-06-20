@@ -95,16 +95,30 @@ class CategoryViewController: UITableViewController {
         }
     }
     
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            for items in Category[indexPath.row] {
-//                context.delete(Item[indexPath.row])
-//            }
-//            context.delete(categoryArray[indexPath.row])
-//            categoryArray.remove(at: indexPath.row)
-//            saveCategories()
-//        }
-//    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            
+            let request: NSFetchRequest<Item> = Item.fetchRequest()
+            let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", categoryArray[indexPath.row].name!)
+            request.predicate = predicate
+            var allItems = [NSManagedObject]()
+
+            do {
+                try allItems = context.fetch(request)
+            } catch {
+                print("Couldn't fetch child items")
+            }
+
+            for item in allItems {
+                context.delete(item)
+                print("Child Item Deleted")
+            }
+            
+            context.delete(categoryArray[indexPath.row])
+            categoryArray.remove(at: indexPath.row)
+            saveCategories()
+        }
+    }
 }
 
 // MARK: - Search Bar Extension

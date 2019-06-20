@@ -2,12 +2,12 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14838.16" systemVersion="19A471t" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="NO" userDefinedModelVersionIdentifier="">
     <entity name="Category" representedClassName=".Category" syncable="YES" codeGenerationType="class">
         <attribute name="name" attributeType="String" defaultValueString=""/>
-        <relationship name="items" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="parentcategory" inverseEntity="Item"/>
+        <relationship name="items" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="parentCategory" inverseEntity="Item"/>
     </entity>
     <entity name="Item" representedClassName=".Item" syncable="YES" codeGenerationType="class">
         <attribute name="status" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String" defaultValueString=""/>
-        <relationship name="parentcategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="items" inverseEntity="Category"/>
+        <relationship name="parentCategory" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Category" inverseName="items" inverseEntity="Category"/>
     </entity>
     <elements>
         <element name="Category" positionX="-8119.23828125" positionY="-7197.4375" width="128" height="73"/>
