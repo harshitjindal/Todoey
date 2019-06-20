@@ -48,8 +48,8 @@ class CategoryViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text
+            self.categoryArray.append(newCategory)
             self.saveCategories()
-            self.tableView.reloadData()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in }
