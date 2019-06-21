@@ -7,12 +7,12 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
     
-    var categoryArray = [Category]()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let realm = try! Realm()
+    var categories: Results<Category>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,12 +23,12 @@ class CategoryViewController: UITableViewController {
     // MARK: - Table View Data Source Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
+        return categories?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let categoryCell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        categoryCell.textLabel?.text = categoryArray[indexPath.row].name
+        categoryCell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
         categoryCell.accessoryType = .disclosureIndicator
         return categoryCell
     }
@@ -46,10 +46,11 @@ class CategoryViewController: UITableViewController {
         }
         
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
-            let newCategory = Category(context: self.context)
-            newCategory.name = textField.text
-            self.categoryArray.append(newCategory)
-            self.saveCategories()
+            let newCategory = Category()
+            if let textInTextfield = textField.text {
+                newCategory.name = textInTextfield
+            }
+            self.save(category: newCategory)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in }
@@ -59,38 +60,35 @@ class CategoryViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-    @IBAction func showAllItems(_ sender: UIBarButtonItem) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        let allItems: [Item]
-        do {
-            try allItems = context.fetch(request)
-            for item in allItems {
-                print(item.title!)
-            }
-        } catch {
-            print(error.localizedDescription)
-        }
-    
-    }
+//    @IBAction func showAllItems(_ sender: UIBarButtonItem) {
+//        let request: NSFetchRequest<Item> = Item.fetchRequest()
+//        let allItems: [Item]
+//        do {
+//            try allItems = context.fetch(request)
+//            for item in allItems {
+//                print(item.title!)
+//            }
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//
+//    }
     
     // MARK: - Data Manipulation Methods
     
-    func saveCategories() {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    func save(category: Category) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
-            print("Error saving context: \(error.localizedDescription)")
+            print("Error saving to Realm: \(error.localizedDescription)")
         }
         tableView.reloadData()
     }
     
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categoryArray = try context.fetch(request)
-        } catch {
-            print("Error Fetching from Persistent Container: \(error.localizedDescription)")
-        }
+    func loadCategories() {
+        categories = realm.objects(Category.self)
         tableView.reloadData()
     }
     
@@ -104,51 +102,51 @@ class CategoryViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destinationVC = segue.destination as! ItemsViewController
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            
-            let request: NSFetchRequest<Item> = Item.fetchRequest()
-            let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", categoryArray[indexPath.row].name!)
-            request.predicate = predicate
-            var allItems = [NSManagedObject]()
-
-            do {
-                try allItems = context.fetch(request)
-            } catch {
-                print("Couldn't fetch child items")
-            }
-
-            for item in allItems {
-                context.delete(item)
-                print("Child Item Deleted")
-            }
-            
-            context.delete(categoryArray[indexPath.row])
-            categoryArray.remove(at: indexPath.row)
-            saveCategories()
-        }
-    }
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//        if editingStyle == .delete {
+//
+//            let request: NSFetchRequest<Item> = Item.fetchRequest()
+//            let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", categories[indexPath.row].name!)
+//            request.predicate = predicate
+//            var allItems = [NSManagedObject]()
+//
+//            do {
+//                try allItems = context.fetch(request)
+//            } catch {
+//                print("Couldn't fetch child items")
+//            }
+//
+//            for item in allItems {
+//                context.delete(item)
+//                print("Child Item Deleted")
+//            }
+//
+//            context.delete(categories[indexPath.row])
+//            categories.remove(at: indexPath.row)
+//            save()
+//        }
+//    }
 }
 
 // MARK: - Search Bar Extension
 
-extension CategoryViewController: UISearchBarDelegate {
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadCategories()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        } else {
-            let request:NSFetchRequest<Category> = Category.fetchRequest()
-            request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
-            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-            loadCategories(with: request)
-        }
-    }
-}
+//extension CategoryViewController: UISearchBarDelegate {
+//
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if searchBar.text?.count == 0 {
+//            loadCategories()
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        } else {
+//            let request:NSFetchRequest<Category> = Category.fetchRequest()
+//            request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+//            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+//            loadCategories(with: request)
+//        }
+//    }
+//}

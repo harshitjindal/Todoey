@@ -7,18 +7,17 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class ItemsViewController: UITableViewController {
     
-    var itemArray = [Item]()
+    let realm = try! Realm()
+    var todoItems: Results<Item>?
     var selectedCategory: Category? {
         didSet {
-            loadData()
+            loadItems()
         }
     }
-    
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,38 +26,38 @@ class ItemsViewController: UITableViewController {
     //MARK: - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoItems?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let itemCell = tableView.dequeueReusableCell(withIdentifier: "toDoItemCell", for: indexPath)
-        let item = itemArray[indexPath.row]
-        
-        itemCell.textLabel?.text = itemArray[indexPath.row].title
-        
-        itemCell.accessoryType = item.status ? .checkmark : .none
+        if let item = todoItems?[indexPath.row] {
+            itemCell.textLabel?.text = item.title
+            itemCell.accessoryType = item.status ? .checkmark : .none
+        } else {
+            itemCell.textLabel?.text = "No Items Added"
+        }
         
         return itemCell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let item = itemArray[indexPath.row]
-        item.status = !(item.status)
-        saveData()
-        tableView.deselectRow(at: indexPath, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            tableView.reloadData()
+        if let item = todoItems?[indexPath.row] {
+            item.status = !(item.status)
+            tableView.deselectRow(at: indexPath, animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                tableView.reloadData()
+            }
         }
-        
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            context.delete(itemArray[indexPath.row])
-            itemArray.remove(at: indexPath.row)
-            saveData()
-        }
-    }
+//        override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//            if editingStyle == .delete {
+//                context.delete(todoItems[indexPath.row])
+//                todoItems.remove(at: indexPath.row)
+//                saveItems()
+//            }
+//        }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
@@ -71,13 +70,21 @@ class ItemsViewController: UITableViewController {
         }
         
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
-            let newItem = Item(context: self.context)
-            newItem.title = textField.text!
-            newItem.parentCategory = self.selectedCategory
-            self.itemArray.append(newItem)
-
-            self.saveData()
-            self.tableView.reloadData()
+            
+            if let currentCategory = self.selectedCategory {
+                let newItem = Item()
+                newItem.title = textField.text!
+                currentCategory.items.append(newItem)
+                
+                do {
+                    try self.realm.write {
+                        self.realm.add(newItem)
+                    }
+                } catch {
+                    print("Error Loading Items from Realm")
+                }
+                self.tableView.reloadData()
+            }
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in }
@@ -87,47 +94,27 @@ class ItemsViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-    func saveData() {
-        do {
-            try context.save()
-        } catch {
-            print("Error saving context: \(error.localizedDescription)")
-        }
-        tableView.reloadData()
-    }
-    
-    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), _ predicate: NSPredicate? = nil) {
-        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        if let additionalPredicate = predicate {
-            request.predicate =  NSCompoundPredicate(andPredicateWithSubpredicates: [additionalPredicate, categoryPredicate])
-        } else {
-            request.predicate = categoryPredicate
-        }
-        
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error Fetching from Persistent Container: \(error.localizedDescription)")
-        }
+    func loadItems() {
+        todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
     }
 }
 
 //MARK: - Search Bar Methods
 
-extension ItemsViewController: UISearchBarDelegate {
-    
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchBar.text?.count == 0 {
-            loadData()
-            DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
-            }
-        } else {
-            let request:NSFetchRequest<Item> = Item.fetchRequest()
-            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-            request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-            loadData(with: request, predicate)
-        }
-    }
-}
+//extension ItemsViewController: UISearchBarDelegate {
+//
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//        if searchBar.text?.count == 0 {
+//            loadData()
+//            DispatchQueue.main.async {
+//                searchBar.resignFirstResponder()
+//            }
+//        } else {
+//            let request:NSFetchRequest<Item> = Item.fetchRequest()
+//            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+//            request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//            loadData(with: request, predicate)
+//        }
+//    }
+//}
