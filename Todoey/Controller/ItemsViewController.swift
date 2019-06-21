@@ -58,13 +58,15 @@ class ItemsViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-//            if let item = todoItems?[indexPath.row] {
-//                do {
-//                    try realm.delete() {
-//                }
-//            } catch {
-//                print("Error Deleting Realm Object")
-//            }
+            if let item = todoItems?[indexPath.row] {
+                do {
+                    try realm.write() {
+                        realm.delete(item)
+                    }
+                } catch {
+                    print("Error Deleting Realm Object")
+                }
+            }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             tableView.reloadData()
