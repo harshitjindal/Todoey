@@ -61,17 +61,10 @@ class CategoryViewController: UITableViewController {
     }
     
     @IBAction func showAllItems(_ sender: UIBarButtonItem) {
-        //        let request: NSFetchRequest<Item> = Item.fetchRequest()
-        //        let allItems: [Item]
-        //        do {
-        //            try allItems = context.fetch(request)
-        //            for item in allItems {
-        //                print(item.title!)
-        //            }
-        //        } catch {
-        //            print(error.localizedDescription)
-        //        }
-        
+        let allItems = realm.objects(Item.self)
+        for item in allItems {
+            print(item.title)
+        }
     }
     
     // MARK: - Data Manipulation Methods
