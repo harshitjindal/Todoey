@@ -144,6 +144,7 @@ extension CategoryViewController: UISearchBarDelegate {
             }
         } else {
             categories = categories?.filter("name CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "name", ascending: true)
+            tableView.reloadData()
         }
     }
 }

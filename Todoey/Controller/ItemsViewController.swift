@@ -46,7 +46,7 @@ class ItemsViewController: UITableViewController {
             do {
                 try realm.write {
                     item.status = !item.status
-                    item.dateModified = NSDate.now
+                    item.dateModified = Date()
                 }
             } catch {
                 print("Error Modifying Realm Object")
@@ -91,7 +91,7 @@ class ItemsViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = textField.text!
-                        newItem.dateModified = NSDate.now
+                        newItem.dateModified = Date()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -126,6 +126,7 @@ extension ItemsViewController: UISearchBarDelegate {
             }
         } else {
             todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "title", ascending: true)
+            tableView.reloadData()
         }
     }
 }
