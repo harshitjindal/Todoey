@@ -84,6 +84,7 @@
 		B378646B22AE7B76009FE9E5 /* Todoey */ = {
 			isa = PBXGroup;
 			children = (
+				B378646C22AE7B76009FE9E5 /* AppDelegate.swift */,
 				B3FFE38822AEC6E40082BAF2 /* Model */,
 				B3FFE38922AEC6F50082BAF2 /* Controller */,
 				B3FFE38A22AEC73A0082BAF2 /* View */,
@@ -105,7 +106,6 @@
 		B3FFE38922AEC6F50082BAF2 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				B378646C22AE7B76009FE9E5 /* AppDelegate.swift */,
 				B3A1D79322BA62F200383E62 /* CategoryViewController.swift */,
 				B378646E22AE7B76009FE9E5 /* ItemsViewController.swift */,
 			);
@@ -398,6 +398,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = P3ZEN42ERU;
 				INFOPLIST_FILE = Todoey/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -417,6 +418,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = P3ZEN42ERU;
 				INFOPLIST_FILE = Todoey/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
