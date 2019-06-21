@@ -46,6 +46,7 @@ class ItemsViewController: UITableViewController {
             do {
                 try realm.write {
                     item.status = !item.status
+                    item.dateModified = NSDate.now
                 }
             } catch {
                 print("Error Modifying Realm Object")
@@ -90,6 +91,7 @@ class ItemsViewController: UITableViewController {
                     try self.realm.write {
                         let newItem = Item()
                         newItem.title = textField.text!
+                        newItem.dateModified = NSDate.now
                         currentCategory.items.append(newItem)
                     }
                 } catch {
