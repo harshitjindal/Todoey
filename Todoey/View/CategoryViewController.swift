@@ -61,17 +61,17 @@ class CategoryViewController: UITableViewController {
     }
     
     @IBAction func showAllItems(_ sender: UIBarButtonItem) {
-//        let request: NSFetchRequest<Item> = Item.fetchRequest()
-//        let allItems: [Item]
-//        do {
-//            try allItems = context.fetch(request)
-//            for item in allItems {
-//                print(item.title!)
-//            }
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-
+        //        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        //        let allItems: [Item]
+        //        do {
+        //            try allItems = context.fetch(request)
+        //            for item in allItems {
+        //                print(item.title!)
+        //            }
+        //        } catch {
+        //            print(error.localizedDescription)
+        //        }
+        
     }
     
     // MARK: - Data Manipulation Methods
@@ -106,36 +106,28 @@ class CategoryViewController: UITableViewController {
         }
     }
     
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//
-//            let request: NSFetchRequest<Item> = Item.fetchRequest()
-//            let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", categories[indexPath.row].name!)
-//            request.predicate = predicate
-//            var allItems = [NSManagedObject]()
-//
-//            do {
-//                try allItems = context.fetch(request)
-//            } catch {
-//                print("Couldn't fetch child items")
-//            }
-//
-//            for item in allItems {
-//                context.delete(item)
-//                print("Child Item Deleted")
-//            }
-//
-//            context.delete(categories[indexPath.row])
-//            categories.remove(at: indexPath.row)
-//            save()
-//        }
-//    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if let selectedCategory = categories?[indexPath.row] {
+                do {
+                    try realm.write {
+                        realm.delete(selectedCategory.items)
+                        realm.delete(selectedCategory)
+                        print("Category deleted along with children")
+                    }
+                } catch {
+                    print("Error deleting!")
+                }
+                tableView.reloadData()
+            }
+        }
+    }
 }
 
 // MARK: - Search Bar Extension
 
 extension CategoryViewController: UISearchBarDelegate {
-
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             loadCategories()
