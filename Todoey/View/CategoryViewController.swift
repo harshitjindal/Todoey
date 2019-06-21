@@ -134,19 +134,16 @@ class CategoryViewController: UITableViewController {
 
 // MARK: - Search Bar Extension
 
-//extension CategoryViewController: UISearchBarDelegate {
-//
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text?.count == 0 {
-//            loadCategories()
-//            DispatchQueue.main.async {
-//                searchBar.resignFirstResponder()
-//            }
-//        } else {
-//            let request:NSFetchRequest<Category> = Category.fetchRequest()
-//            request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
-//            request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-//            loadCategories(with: request)
-//        }
-//    }
-//}
+extension CategoryViewController: UISearchBarDelegate {
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadCategories()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        } else {
+            categories = categories?.filter("name CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "name", ascending: true)
+        }
+    }
+}
