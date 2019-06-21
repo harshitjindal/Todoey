@@ -38,7 +38,7 @@ class CategoryViewController: UITableViewController {
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add Todoey Item", message: "Please Enter Category Name", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add Category", message: "Please Enter Category Name", preferredStyle: .alert)
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Category Name"
@@ -60,7 +60,7 @@ class CategoryViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-//    @IBAction func showAllItems(_ sender: UIBarButtonItem) {
+    @IBAction func showAllItems(_ sender: UIBarButtonItem) {
 //        let request: NSFetchRequest<Item> = Item.fetchRequest()
 //        let allItems: [Item]
 //        do {
@@ -71,8 +71,8 @@ class CategoryViewController: UITableViewController {
 //        } catch {
 //            print(error.localizedDescription)
 //        }
-//
-//    }
+
+    }
     
     // MARK: - Data Manipulation Methods
     
