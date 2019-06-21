@@ -72,19 +72,17 @@ class ItemsViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Done", style: .default) { (addAction) in
             
             if let currentCategory = self.selectedCategory {
-                let newItem = Item()
-                newItem.title = textField.text!
-                currentCategory.items.append(newItem)
-                
                 do {
                     try self.realm.write {
-                        self.realm.add(newItem)
+                        let newItem = Item()
+                        newItem.title = textField.text!
+                        currentCategory.items.append(newItem)
                     }
                 } catch {
                     print("Error Loading Items from Realm")
                 }
-                self.tableView.reloadData()
             }
+            self.tableView.reloadData()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (cancelAction) in }
